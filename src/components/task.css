@@ -1,0 +1,38 @@
+.task {
+    width: 450px;
+    height: 200px;
+    border: 3px solid rgb(0, 0, 0);
+    border-radius: 25px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.task-checkbox {
+    width: 25px;
+    height: 25px;
+    border: 5px solid #000000;
+    border-radius: 10px;
+    display: inline-block;
+    vertical-align: center;
+    margin-right: 10px;
+}
+
+.task-content {
+    display: inline-block;
+    width: 371px;
+    height: 136px;
+}
+
+.task-name {
+    display: block;
+    text-align: center;
+    width: 100%;
+}
+
+.task-description {
+    display: block;
+    width: 100%;
+}
