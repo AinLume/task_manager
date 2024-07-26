@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import Task from './Task.js'
+import Task from './Task.js';
+import './taskmanager.css';
 
 function TaskManager () {
     const [name, setName] = useState('');

@@ -1,0 +1,16 @@
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.task-manage-form {
+    display: inline-block;
+    background-color: rgb(224, 224, 224);
+    max-width: 250px;
+    height: 300px;
+    border: 3px solid rgb(0, 0, 0);
+    border-radius: 10px;
+    padding: 10px;
+}
