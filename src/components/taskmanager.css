@@ -5,6 +5,12 @@
     position: relative;
 }
 
+.task-description {
+    max-width: 225.2px;
+    max-height: 200px;
+    margin-left: 0;
+}
+
 .task-manage-form {
     display: inline-block;
     background-color: rgb(224, 224, 224);
