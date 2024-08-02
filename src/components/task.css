@@ -1,8 +1,10 @@
 .task {
     width: 450px;
     height: 200px;
-    border: 3px solid rgb(0, 0, 0);
+    border: 2px solid #FF6C00;
+    color: #A64600;
     border-radius: 10px;
+    margin: 10px 10px 10px 10px;
     padding: 10px;
     display: flex;
     align-items: center;
@@ -13,7 +15,7 @@
 .task-checkbox {
     width: 25px;
     height: 25px;
-    border: 5px solid #000000;
+    border: 2px solid #FF6C00;
     border-radius: 10px;
     display: inline-block;
     vertical-align: center;
@@ -30,9 +32,11 @@
     display: block;
     text-align: center;
     width: 100%;
+    font-family: "Comfortaa SemiBold", sans-serif;
 }
 
 .task-description {
     display: block;
     width: 100%;
+    font-family: "Comfortaa SemiBold", sans-serif;
 }

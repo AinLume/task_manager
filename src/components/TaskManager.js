@@ -52,28 +52,28 @@ function TaskManager () {
         <div className='container'>
             <form className='task-manage-form' onSubmit={handleSubmit}>
                 <label className='task-name-label'>
-                    Название:
+                    <h4>Название:</h4>
                     <input type='text' className='task-name' value={name} onChange={handleChangeName}></input>
                 </label>
                 <label className='task-category-label'>
-                    Категория:
-                    <select value={currentCategory} onChange={handleChangeCurrentCategory}>
+                    <h4>Категория:</h4>
+                    <select className="category-select" value={currentCategory} onChange={handleChangeCurrentCategory}>
                         <option value="">Выберите категорию</option>
                         {tasks.map((category, index) => (
-                            <option key={index} value={category.category}>{category.category}</option>
+                            <option className="category" key={index} value={category.category}>{category.category}</option>
                         ))}
                     </select>
                 </label>
                 <label className='task-description-label'>
-                    Описание:
+                    <h4>Описание:</h4>
                     <textarea className='task-description' value={description}
                               onChange={handleChangeDescription}></textarea>
                 </label>
                 <button className='task-add' type='submit'>Добавить</button>
                 <div className="add-category-form">
                     <label>
-                        Новая категория:
-                        <input type="text" value={newCategory} onChange={handleChangeNewCategory}/>
+                        <h4>Новая категория:</h4>
+                        <input className="category-input" type="text" value={newCategory} onChange={handleChangeNewCategory}/>
                     </label>
                     <button onClick={handleAddCategory}>Добавить категорию</button>
                 </div>
