@@ -4,7 +4,7 @@ import {TCategory, TTask} from "../../types";
 import "./styles.css";
 import {TaskModal} from "../TaskModal";
 
-function TaskManager() {
+export const TaskManager = () => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [categories, setCategories] = useState<TCategory[]>([
@@ -114,5 +114,3 @@ function TaskManager() {
         </div>
     );
 }
-
-export default TaskManager;

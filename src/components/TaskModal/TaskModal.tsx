@@ -5,7 +5,7 @@ interface IProps {
     modal: TTaskModal;
 }
 
-export function TaskModal({modal}: IProps) {
+export const TaskModal: FC<IProps> = ({modal}) => {
     if (!modal.isOpen) return null;
 
     return (
