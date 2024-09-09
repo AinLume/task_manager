@@ -1,0 +1,11 @@
+.task {
+    border: 2px solid darkgreen;
+    display: flex;
+    column-gap: 5px;
+    flex-direction: row;
+}
+
+.task-content {
+    display: flex;
+    flex-direction: column;
+}
