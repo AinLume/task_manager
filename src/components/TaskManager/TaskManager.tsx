@@ -56,11 +56,12 @@ export const TaskManager = () => {
     };
 
     const handleAddCategory = () => {
-        if (newCategory.trim() !== "") {
-            // setTasks();
-            setCurrentCategory(newCategory);
-            setNewCategory('');
-        }
+        const new_category: TCategory = {
+            id: 3,
+            name: "Animals",
+            tasks: []
+        };
+        setCategories([...categories, new_category]);
     };
 
     const handleOpenModal = () => {
@@ -110,6 +111,7 @@ export const TaskManager = () => {
                         </div>
                     </div>
                 ))}
+                <button className="add-column-btn" onClick={handleAddCategory}>+</button>
             </div>
         </div>
     );

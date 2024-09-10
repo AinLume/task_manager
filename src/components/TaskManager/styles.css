@@ -14,3 +14,12 @@
     flex-direction: column;
     row-gap: 10px;
 }
+
+.add-column-btn {
+    height: 30%;
+    margin-top: auto;
+
+    background-color: cyan;
+    border: 2px solid #006f6f;
+    color: red;
+}
