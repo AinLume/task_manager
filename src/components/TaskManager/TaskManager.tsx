@@ -3,6 +3,7 @@ import {Task} from '../Task';
 import {TCategory, TTask} from "../../types";
 import "./styles.css";
 import {TaskModal} from "../TaskModal";
+import {CategoryColumn} from "../CategoryColumn";
 
 export const TaskManager = () => {
     const [name, setName] = useState('');
@@ -102,14 +103,7 @@ export const TaskManager = () => {
             {/*</form>*/}
             <div className='categories-container'>
                 {categories.map((category) => (
-                    <div className="category" key={category.id}>
-                        <p className="category-name">{category.name}</p>
-                        <div className="tasks-container">
-                            {category.tasks.map((task) => (
-                                <Task func={handleOpenModal} key={task.id} task={task}/>
-                            ))}
-                        </div>
-                    </div>
+                    <CategoryColumn category={category} /*id={category.id} name={category.name} tasks={category.tasks}*//>
                 ))}
                 <button className="add-column-btn" onClick={handleAddCategory}>+</button>
             </div>
