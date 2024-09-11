@@ -59,11 +59,16 @@ export const TaskManager = () => {
     const handleAddCategory = () => {
         const new_category: TCategory = {
             id: 3,
-            name: "Animals",
+            name: "",
             tasks: []
         };
         setCategories([...categories, new_category]);
     };
+
+    const changeCategoryName = (category: TCategory) => {
+        category.name = name;
+        console.log("Name was editing" + category.name);
+    }
 
     const handleOpenModal = () => {
         setOpen(true);
@@ -75,35 +80,9 @@ export const TaskManager = () => {
 
     return (
         <div className='container'>
-            {/*<form className='task-manage-form' onSubmit={handleSubmit}>*/}
-            {/*    <label className='task-name-label'>*/}
-            {/*        <h4>Название:</h4>*/}
-            {/*        <input type='text' className='task-name' value={name} onChange={handleChangeName}></input>*/}
-            {/*    </label>*/}
-            {/*    <label className='task-category-label'>*/}
-            {/*        <h4>Категория:</h4>*/}
-            {/*        <select className="category-select" value={currentCategory} onChange={handleChangeCurrentCategory}>*/}
-            {/*            <option value="">Выберите категорию</option>*/}
-
-            {/*        </select>*/}
-            {/*    </label>*/}
-            {/*    <label className='task-description-label'>*/}
-            {/*        <h4>Описание:</h4>*/}
-            {/*        <textarea className='task-description' value={description}*/}
-            {/*                  onChange={handleChangeDescription}></textarea>*/}
-            {/*    </label>*/}
-            {/*    <button className='task-add' type='submit'>Добавить</button>*/}
-            {/*    <div className="add-category-form">*/}
-            {/*        <label>*/}
-            {/*            <h4>Новая категория:</h4>*/}
-            {/*            <input className="category-input" type="text" value={newCategory} onChange={handleChangeNewCategory}/>*/}
-            {/*        </label>*/}
-            {/*        <button onClick={handleAddCategory}>Добавить категорию</button>*/}
-            {/*    </div>*/}
-            {/*</form>*/}
             <div className='categories-container'>
                 {categories.map((category) => (
-                    <CategoryColumn category={category} /*id={category.id} name={category.name} tasks={category.tasks}*//>
+                    <CategoryColumn category={category} onChange={changeCategoryName}/>
                 ))}
                 <button className="add-column-btn" onClick={handleAddCategory}>+</button>
             </div>
