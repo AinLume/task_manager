@@ -1,0 +1,11 @@
+.category {
+    background-color: cyan;
+    padding: 10px;
+    border: 2px solid #006f6f;
+}
+
+.tasks-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
