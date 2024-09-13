@@ -1,5 +1,5 @@
 import React, {FC, useState} from 'react';
-import {TCategory} from "../../types";
+import {TCategory, TTask} from "../../types";
 import {Task} from "../Task";
 import "./styles.css";
 
@@ -10,9 +10,19 @@ interface IProps {
 
 export const CategoryColumn: FC<IProps> = ({category, onChange}) => {
     const [name, setName] = useState<string>(category.name);
+    const [tasks, setTasks] = useState<TTask[]>(category.tasks);
 
     const handleChangeName = () => {
         onChange({...category, name});
+    }
+
+    const changeTaskName = (t: TTask) => {
+        setTasks(prevState => prevState.map((task: TTask) => {
+            if (task.id === t.id) {
+                return t;
+            }
+            return task;
+        }));
     }
 
     return (
@@ -25,7 +35,7 @@ export const CategoryColumn: FC<IProps> = ({category, onChange}) => {
             />
             <div className="tasks-container">
             {category.tasks.map((task) => (
-                    <Task key={task.id} task={task}/>
+                    <Task key={task.id} task={task} onChange={changeTaskName} />
                 ))}
             </div>
         </div>
