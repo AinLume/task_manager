@@ -34,7 +34,7 @@ export const CategoryColumn: FC<IProps> = ({category, onChange}) => {
                    onBlur={handleChangeName}
             />
             <div className="tasks-container">
-            {category.tasks.map((task) => (
+            {tasks.map((task) => (
                     <Task key={task.id} task={task} onChange={changeTaskName} />
                 ))}
             </div>
