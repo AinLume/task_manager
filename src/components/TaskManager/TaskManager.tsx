@@ -1,23 +1,47 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {TCategory, TTask} from "../../types";
 import "./styles.css";
 import {CategoryColumn} from "../CategoryColumn";
 
 export const TaskManager = () => {
-    const [categories, setCategories] = useState<TCategory[]>([
-        {
-            id: 1,
-            name: "Fruits",
-            tasks: [{id: 1, name: "Apple", description: "Green, honey"},
-                    {id: 3, name: "Orange", description: "Orange, honey"}]
-        },
-        {
-            id: 2,
-            name: "Cars",
-            tasks: [{id: 2, name: "Volkswagen Golf", description: "GTI, 2.0 turbo"},
-                    {id: 4, name: "Skoda Octavia", description: "RS, 2.0 turbo"}]
-        },
-    ]);
+    const [categories, setCategories] = useState<TCategory[]>([]);
+
+    useEffect(() => {
+        const storageCategories: TCategory[] = [];
+
+        for (let i = 0; i < localStorage.length; ++i) {
+            const key = localStorage.key(i);
+            if (key) {
+                const data = localStorage.getItem(key);
+                if (data) {
+                    try {
+                        const parseData = JSON.parse(data);
+
+                        if (Array.isArray(parseData)) {
+                            const tasks: TTask[] = parseData.map((task: any) => ({
+                                id: task.id,
+                                name: task.name,
+                                description: task.description
+                            }));
+
+                            const category: TCategory = {
+                                id: tasks[0].id,
+                                name: key,
+                                tasks: tasks
+                            };
+                            storageCategories.push(category);
+                        }
+
+                    } catch(error) {
+                        console.error("Не удалось спрасить JSON");
+                    }
+                }
+            }
+        }
+
+        setCategories(storageCategories);
+
+    }, []);
 
     const handleAddCategory = () => {
         const new_category: TCategory = {
@@ -26,6 +50,11 @@ export const TaskManager = () => {
             tasks: []
         };
         setCategories(prevState => [...prevState, new_category]);
+        categories.forEach((category: TCategory) => {
+            localStorage.setItem(category.name, JSON.stringify(category.tasks));
+            console.log(category.name);
+            console.log(JSON.stringify(category.tasks));
+        })
     };
 
     const changeCategoryName = (c: TCategory) => {

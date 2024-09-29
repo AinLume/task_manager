@@ -14,6 +14,8 @@ export const CategoryColumn: FC<IProps> = ({category, onChange}) => {
 
     const handleChangeName = () => {
         onChange({...category, name});
+        localStorage.removeItem(category.name);
+        localStorage.setItem(name, JSON.stringify(category.tasks));
     }
 
     const changeTaskName = (t: TTask) => {
