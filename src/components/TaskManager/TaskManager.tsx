@@ -25,7 +25,7 @@ export const TaskManager = () => {
                             }));
 
                             const category: TCategory = {
-                                id: tasks[0].id,
+                                id: tasks.length > 0 ? tasks[0].id : 0,
                                 name: key,
                                 tasks: tasks
                             };
@@ -45,15 +45,13 @@ export const TaskManager = () => {
 
     const handleAddCategory = () => {
         const new_category: TCategory = {
-            id: 3,
+            id: categories.length + 1,
             name: "",
             tasks: []
         };
         setCategories(prevState => [...prevState, new_category]);
         categories.forEach((category: TCategory) => {
             localStorage.setItem(category.name, JSON.stringify(category.tasks));
-            console.log(category.name);
-            console.log(JSON.stringify(category.tasks));
         })
     };
 

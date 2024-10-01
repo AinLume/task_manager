@@ -3,25 +3,26 @@ import {TTask} from "../../types";
 import "./Task.css";
 import {TaskModal} from "../TaskModal";
 import {useModal} from "../../hooks/useModal";
-import {ChangeableLabel} from "../ChangeableLabel/ChangeableLabel";
+import {ChangeableLabel} from "../ChangeableLabel";
 
 interface IProps {
     task: TTask;
-    onChange: (task: TTask) => void;
+    onChange_name: (task: TTask) => void;
+    onChange_description: (task: TTask) => void;
 }
 
-export const Task: FC<IProps> = ({task, onChange}) => {
+export const Task: FC<IProps> = ({task, onChange_name, onChange_description}) => {
     const {isOpen, toggle} = useModal();
 
     const [name, setName] = useState<string>(task.name);
     const [description, setDescription] = useState<string>(task.description);
 
     const handleChangeName = () => {
-        onChange({...task, name});
+        onChange_name({...task, name});
     }
 
     const handleChangeDescription = () => {
-        onChange({...task, description});
+        onChange_description({...task, description});
     }
 
     return (
