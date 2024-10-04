@@ -5,13 +5,16 @@ import {Task} from "../Task";
 import {useModal} from "../../hooks/useModal";
 import {TaskModal} from "../TaskModal";
 import {ChangeableLabel} from "../ChangeableLabel";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faTrash} from "@fortawesome/free-solid-svg-icons";
 
 interface IProps {
     category: TCategory;
     onChange: (category: TCategory) => void;
+    deleteCategory: (id: number) => void;
 }
 
-export const CategoryColumn: FC<IProps> = ({category, onChange}) => {
+export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory}) => {
     const [name, setName] = useState<string>(category.name);
     const [tasks, setTasks] = useState<TTask[]>(category.tasks);
 
@@ -71,25 +74,35 @@ export const CategoryColumn: FC<IProps> = ({category, onChange}) => {
         }
     }
 
+    const handleDeleteCategory = () => {
+        localStorage.removeItem(category.name);
+        deleteCategory(category.id);
+    }
+
     useEffect(() => {
         handleAddTask();
     }, [!isOpen]);
 
     return (
         <div className="category" key={category.id}>
-            <input className="category-name-input"
-                   type="text"
-                   value={name}
-                   onChange={e => setName(e.target.value)}
-                   onBlur={handleChangeName}
-            />
+            <div className="input-container">
+                <input className="category-name-input"
+                       type="text"
+                       value={name}
+                       onChange={e => setName(e.target.value)}
+                       onBlur={handleChangeName}
+                />
+                <button className="category-delete" onClick={handleDeleteCategory}>
+                    <FontAwesomeIcon icon={faTrash} />
+                </button>
+            </div>
             <div className="tasks-container">
-            {tasks.map((task) => (
+                {tasks.map((task) => (
                     <Task key={task.id} task={task} onChange_name={changeTask} onChange_description={changeTask}/>
                 ))}
             </div>
             <div className="add-task" onClick={toggle}>
-                <h1>+</h1>
+                <label>+ Add task</label>
             </div>
             <TaskModal isOpen={isOpen} toggle={toggle}>
                 <ChangeableLabel component="input"

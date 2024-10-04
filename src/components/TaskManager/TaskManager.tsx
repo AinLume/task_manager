@@ -49,26 +49,35 @@ export const TaskManager = () => {
             name: "",
             tasks: []
         };
+
         setCategories(prevState => [...prevState, new_category]);
-        categories.forEach((category: TCategory) => {
-            localStorage.setItem(category.name, JSON.stringify(category.tasks));
-        })
     };
 
     const changeCategoryName = (c: TCategory) => {
-        setCategories(prevState => prevState.map((category: TCategory) => {
-            if (category.id === c.id) {
-                return c;
-            }
-            return category;
-        }));
+        const oldCategory = categories.find(category => category.id === c.id);
+
+        setCategories(prevState => prevState.map((category: TCategory) =>
+            category.id === c.id ? c : category
+        ));
+
+        if (oldCategory && oldCategory.name.trim() !== "") {
+            localStorage.removeItem(oldCategory.name);
+        }
+
+        if (c.name.trim() !== "") {
+            localStorage.setItem(c.name, JSON.stringify(c.tasks));
+        }
+    }
+
+    const handleDeleteCategory = (id: number) => {
+        setCategories(prevState => prevState.filter((c) => c.id !== id));
     }
 
     return (
         <div className='container'>
             <div className='categories-container'>
                 {categories.map((category) => (
-                    <CategoryColumn category={category} onChange={changeCategoryName}/>
+                    <CategoryColumn key={category.id} category={category} onChange={changeCategoryName} deleteCategory={handleDeleteCategory}/>
                 ))}
                 <button className="add-column-btn" onClick={handleAddCategory}>+</button>
             </div>
