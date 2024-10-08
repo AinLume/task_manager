@@ -12,10 +12,34 @@
 }
 
 .modal-box {
-    display: block;
     background: white;
-    width: 70%;
-    height: 70%;
-    padding: 1rem;
+    width: 384px;
+    height: 512px;
     border-radius: 1rem;
+
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    align-items: center;
+    padding: 32px 32px;
+}
+
+.modal-btn {
+    height: 40px;
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    background:  rgba(162, 162, 167, 0.15);
+    padding: 5px 15px;
+    margin-top: 110%;
+
+    font-family: 'Harlow Solid Italic',  Arial, sans-serif;
+    font-size: 16px;
+    color:  rgba(162, 162, 167, 0.8);
+    transition: color 0.3s ease-in-out;
+}
+
+.modal-btn:hover {
+    cursor: pointer;
+    color:  rgb(38, 38, 38);
 }

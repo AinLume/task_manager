@@ -1,5 +1,4 @@
 import React, {FC, useState} from 'react';
-import {TTask} from "../../types";
 
 interface IProps {
     component: string;
@@ -7,9 +6,10 @@ interface IProps {
     onChange: (str: string) => void;
     handleChange: () => void;
     value: string;
+    placeHolder?: string;
 }
 
-export const ChangeableLabel: FC<IProps> = ({component, onChange, className, handleChange, value}) => {
+export const ChangeableLabel: FC<IProps> = ({component, onChange, placeHolder, className, handleChange, value}) => {
 
     return (
         <>
@@ -19,12 +19,14 @@ export const ChangeableLabel: FC<IProps> = ({component, onChange, className, han
                        value={value}
                        onChange={e => onChange(e.target.value)}
                        onBlur={handleChange}
+                       placeholder={placeHolder}
                 />
             ) : (
                 <textarea className={className}
                           value={value}
                           onChange={e => onChange(e.target.value)}
                           onBlur={handleChange}
+                          placeholder={placeHolder}
                 />
             )}
         </>

@@ -5,72 +5,76 @@ import {CategoryColumn} from "../CategoryColumn";
 
 export const TaskManager = () => {
     const [categories, setCategories] = useState<TCategory[]>([]);
+    const [categoriesIds, setCategoriesIds] = useState<number[]>([]);
 
     useEffect(() => {
-        const storageCategories: TCategory[] = [];
+        const ls_cIds = localStorage.getItem("categoriesIds");
+        let ls_categoriesIds_strings = [""];
+        const ls_categoriesIds: number[] = [];
+        if (ls_cIds) {
+            ls_categoriesIds_strings = JSON.parse(ls_cIds);
+            ls_categoriesIds_strings.forEach((id) => {ls_categoriesIds.push(Number(id))});
+        }
+        setCategoriesIds(ls_categoriesIds);
 
-        for (let i = 0; i < localStorage.length; ++i) {
-            const key = localStorage.key(i);
-            if (key) {
-                const data = localStorage.getItem(key);
-                if (data) {
-                    try {
-                        const parseData = JSON.parse(data);
+        const storagedCategories: TCategory[]  = [];
 
-                        if (Array.isArray(parseData)) {
-                            const tasks: TTask[] = parseData.map((task: any) => ({
-                                id: task.id,
-                                name: task.name,
-                                description: task.description
-                            }));
+        for (let i = 0; i < ls_categoriesIds.length; ++i) {
+            const data = localStorage.getItem(String(ls_categoriesIds[i]));
+            if (data) {
+                const parsedData = JSON.parse(data);
+                const ls_name = parsedData.name;
+                const ls_tasks = parsedData.tasks;
 
-                            const category: TCategory = {
-                                id: tasks.length > 0 ? tasks[0].id : 0,
-                                name: key,
-                                tasks: tasks
-                            };
-                            storageCategories.push(category);
-                        }
+                const tasks: TTask[] = ls_tasks.map((task: any) => ({
+                    id: task.id,
+                    name: task.name,
+                    description: task.description
+                }));
 
-                    } catch(error) {
-                        console.error("Не удалось спрасить JSON");
-                    }
-                }
+                const category: TCategory = {
+                    id: ls_categoriesIds[i],
+                    name: ls_name,
+                    tasks: tasks
+                };
+
+                storagedCategories.push(category);
             }
         }
 
-        setCategories(storageCategories);
+        setCategories(storagedCategories);
 
     }, []);
 
     const handleAddCategory = () => {
+        const newId = categoriesIds.length !== 0 ? categoriesIds[categoriesIds.length - 1] + 1 : 1;
         const new_category: TCategory = {
-            id: categories.length + 1,
+            id: newId,
             name: "",
             tasks: []
         };
+        const newCategoriesId = [...categoriesIds, newId];
 
+        setCategoriesIds(newCategoriesId)
         setCategories(prevState => [...prevState, new_category]);
+
+        localStorage.setItem(String(newId), JSON.stringify(new_category));
+        localStorage.setItem("categoriesIds", JSON.stringify(newCategoriesId));
     };
 
     const changeCategoryName = (c: TCategory) => {
-        const oldCategory = categories.find(category => category.id === c.id);
-
         setCategories(prevState => prevState.map((category: TCategory) =>
             category.id === c.id ? c : category
         ));
-
-        if (oldCategory && oldCategory.name.trim() !== "") {
-            localStorage.removeItem(oldCategory.name);
-        }
-
-        if (c.name.trim() !== "") {
-            localStorage.setItem(c.name, JSON.stringify(c.tasks));
-        }
     }
 
     const handleDeleteCategory = (id: number) => {
         setCategories(prevState => prevState.filter((c) => c.id !== id));
+
+        const newCIds = categoriesIds.filter((id_y: number) => id_y !== id);
+
+        setCategoriesIds(newCIds);
+        localStorage.setItem("categoriesIds", JSON.stringify(newCIds));
     }
 
     return (
@@ -79,7 +83,7 @@ export const TaskManager = () => {
                 {categories.map((category) => (
                     <CategoryColumn key={category.id} category={category} onChange={changeCategoryName} deleteCategory={handleDeleteCategory}/>
                 ))}
-                <button className="add-column-btn" onClick={handleAddCategory}>+</button>
+                <button className="add-column-btn" onClick={handleAddCategory}>+ Add category</button>
             </div>
         </div>
     );

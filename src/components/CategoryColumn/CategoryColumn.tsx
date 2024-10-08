@@ -37,8 +37,15 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory})
 
     const handleChangeName = () => {
         onChange({...category, name});
-        localStorage.removeItem(name);
-        localStorage.setItem(name, JSON.stringify(tasks));
+
+        const new_category: TCategory = {
+            id: category.id,
+            name: name,
+            tasks: category.tasks
+        };
+
+        localStorage.removeItem(String(new_category.id));
+        localStorage.setItem(String(new_category.id), JSON.stringify(new_category));
     }
 
     const changeTask = (t: TTask) => {
@@ -49,8 +56,15 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory})
             return task;
         });
         setTasks(updatedTasks);
-        localStorage.removeItem(name);
-        localStorage.setItem(name, JSON.stringify(updatedTasks));
+
+        const new_category: TCategory = {
+            id: category.id,
+            name: category.name,
+            tasks: updatedTasks
+        };
+
+        localStorage.removeItem(String(new_category.id));
+        localStorage.setItem(String(new_category.id), JSON.stringify(new_category));
     }
 
     const handleAddTask = () => {
@@ -64,8 +78,14 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory})
             const updatedTasks = [...tasks, new_task];
             setTasks(updatedTasks);
 
-            localStorage.removeItem(name);
-            localStorage.setItem(name, JSON.stringify(updatedTasks));
+            const new_category: TCategory = {
+                id: category.id,
+                name: category.name,
+                tasks: updatedTasks
+            }
+
+            localStorage.removeItem(String(new_category.id));
+            localStorage.setItem(String(new_category.id), JSON.stringify(new_category));
 
             setTName("");
             setTDescription("");
@@ -75,7 +95,7 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory})
     }
 
     const handleDeleteCategory = () => {
-        localStorage.removeItem(category.name);
+        localStorage.removeItem(String(category.id));
         deleteCategory(category.id);
     }
 
@@ -106,18 +126,20 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory})
             </div>
             <TaskModal isOpen={isOpen} toggle={toggle}>
                 <ChangeableLabel component="input"
-                                 className="modal-new-task-name"
+                                 className="modal-task-name"
                                  onChange={setTName}
                                  handleChange={handleSetTName}
                                  value={t_name}
+                                 placeHolder="Task name"
                 />
                 <ChangeableLabel component="textarea"
                                  className="modal-task-description"
                                  onChange={setTDescription}
                                  handleChange={handleSetTDescription}
                                  value={t_description}
+                                 placeHolder="Task description"
                 />
             </TaskModal>
         </div>
-    );
+);
 };

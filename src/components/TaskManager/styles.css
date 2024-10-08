@@ -4,10 +4,19 @@
 }
 
 .add-column-btn {
-    height: 30%;
-    margin-top: auto;
+    max-height: 30px;
+    border: none;
+    border-radius: 8px;
+    background:  rgba(162, 162, 167, 0.15);
+    padding: 5px 15px;
 
-    background-color: cyan;
-    border: 2px solid #006f6f;
-    color: red;
+    font-family: 'Harlow Solid Italic',  Arial, sans-serif;
+    font-size: 16px;
+    color:  rgba(162, 162, 167, 0.8);
+    transition: color 0.3s ease-in-out;
+}
+
+.add-column-btn:hover {
+    cursor: pointer;
+    color:  rgb(38, 38, 38);
 }

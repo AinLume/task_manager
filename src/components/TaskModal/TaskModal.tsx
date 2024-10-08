@@ -13,7 +13,7 @@ export const TaskModal = (props: TTaskModal) => (
             <div className="modal-overlay">
                 <div className="modal-box">
                     {props.children}
-                    <button className="modal-btn" onClick={props.toggle}></button>
+                    <button className="modal-btn" onClick={props.toggle}>Save</button>
                 </div>
             </div>
         )}

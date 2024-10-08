@@ -33,20 +33,20 @@ export const Task: FC<IProps> = ({task, onChange_name, onChange_description}) =>
                 <label className='task-description'>{task.description}</label>
             </div>
             <TaskModal isOpen={isOpen} toggle={toggle}>
-                <div className='modal-task-content'>
-                    <ChangeableLabel component="input"
-                                     className="modal-task-name"
-                                     onChange={setName}
-                                     handleChange={handleChangeName}
-                                     value={name}
-                    />
-                    <ChangeableLabel component="textarea"
-                                     className="modal-task-description"
-                                     onChange={setDescription}
-                                     handleChange={handleChangeDescription}
-                                     value={description}
-                    />
-                </div>
+                <ChangeableLabel component="input"
+                                 className="modal-task-name"
+                                 onChange={setName}
+                                 handleChange={handleChangeName}
+                                 value={name}
+                                 placeHolder="Task name"
+                />
+                <ChangeableLabel component="textarea"
+                                 className="modal-task-description"
+                                 onChange={setDescription}
+                                 handleChange={handleChangeDescription}
+                                 value={description}
+                                 placeHolder="Task description"
+                />
             </TaskModal>
         </div>
     );
