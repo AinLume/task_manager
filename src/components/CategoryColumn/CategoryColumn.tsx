@@ -25,6 +25,9 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory})
     const [nameIsChanged, setNameIsChanged] = useState<boolean>(false);
     const [descriptionIsChanged, setDescriptionIsChanged] = useState<boolean>(false);
 
+    // drag&drop
+    const [draggedTaskId, setDraggedTaskId] = useState<number | null>(null);
+
     const handleSetTName = () => {
         if (t_name !== "") {
             setNameIsChanged(true);

@@ -16,6 +16,17 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    max-width: 100%;
+}
+
+.task-description {
+    color: rgb(162, 162, 167);
+    display: -webkit-box;
+    max-width: 170px;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .task-checkbox {
@@ -30,7 +41,7 @@
     cursor: pointer;
     margin-left: 10px;
     margin-right: 10px;
-    margin-top: 5px;
+    margin-top: 0;
     flex-shrink: 0;
 }
 
@@ -42,4 +53,17 @@
     background-color: rgba(162, 162, 167, 0.8);
     border-radius: 50%;
     text-align: center;
+}
+
+.task-edit-btn {
+    color: rgba(162, 162, 167, 0.8);
+    margin-top: -15px;
+    margin-right: 5px;
+    border: none;
+    background: none;
+}
+
+.task-edit-btn:hover {
+    cursor: pointer;
+    color: rgb(142, 142, 142);
 }

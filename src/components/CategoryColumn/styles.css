@@ -1,6 +1,7 @@
 .category {
     background-color: white;
     max-width: 256px;
+    width: 256px;
 }
 
 .input-container {
