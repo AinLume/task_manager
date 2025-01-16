@@ -26,7 +26,72 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory})
     const [descriptionIsChanged, setDescriptionIsChanged] = useState<boolean>(false);
 
     // drag&drop
-    const [draggedTaskId, setDraggedTaskId] = useState<number | null>(null);
+    const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
+        const task_div =  event.currentTarget;
+        const task_id = task_div.getAttribute("data-id");
+        const task_name = task_div.getAttribute("data-name");
+        const task_description = task_div.getAttribute("data-description");
+
+        if (task_id && task_name && task_description) {
+            const saved_task: TTask = {
+                id: parseInt(task_id),
+                name: task_name,
+                description: task_description
+            };
+            event.dataTransfer.setData("task", JSON.stringify(saved_task));
+
+            handleDeleteTask(saved_task);
+        }
+        else {
+            console.log("Task doesn't exist");
+        }
+    }
+
+    const enableDropping = (event: React.DragEvent<HTMLDivElement>) => {
+        event.preventDefault();
+    }
+
+    const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        const data = event.dataTransfer.getData("task");
+
+        if (data) {
+            try {
+                const parsedData = JSON.parse(data);
+
+                if (parsedData.id && parsedData.name && parsedData.description) {
+
+                    const task: TTask = ({
+                        id: tasks[tasks.length - 1].id + 1,
+                        name: parsedData.name,
+                        description: parsedData.description
+                    });
+                    const updatedTasks = [...tasks, task];
+                    setTasks(updatedTasks);
+
+                    const new_category: TCategory = {
+                        id: category.id,
+                        name: category.name,
+                        tasks: updatedTasks
+                    }
+                    localStorage.removeItem(String(new_category.id));
+                    localStorage.setItem(String(new_category.id), JSON.stringify(new_category));
+
+                    console.log("D&D, id - " + data);
+                }
+                else {
+                    console.log("Invalid task data")
+                }
+            }
+            catch(error) {
+                console.error("Failed to save task", error);
+            }
+        }
+        else {
+            console.error("No task data");
+        }
+    };
+    // drag&drop
 
     const handleSetTName = () => {
         if (t_name !== "") {
@@ -102,9 +167,27 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory})
         deleteCategory(category.id);
     }
 
+    const handleDeleteTask = (t: TTask) => {
+        const index = tasks.findIndex((task: TTask) => task.id === t.id);
+        const updatedTasks = tasks.splice(index, 1);
+
+        setTasks(updatedTasks);
+
+        const new_category: TCategory = {
+            id: category.id,
+            name: category.name,
+            tasks: updatedTasks
+        };
+
+        localStorage.removeItem(String(new_category.id));
+        localStorage.setItem(String(new_category.id), JSON.stringify(new_category));
+    }
+
     useEffect(() => {
-        handleAddTask();
-    }, [!isOpen]);
+        if (!isOpen) {
+            handleAddTask();
+        }
+    }, [isOpen]);
 
     return (
         <div className="category" key={category.id}>
@@ -119,9 +202,14 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory})
                     <FontAwesomeIcon icon={faTrash} />
                 </button>
             </div>
-            <div className="tasks-container">
+            <div onDragOver={enableDropping} onDrop={handleDrop} className="tasks-container">
                 {tasks.map((task) => (
-                    <Task key={task.id} task={task} onChange_name={changeTask} onChange_description={changeTask}/>
+                    <div draggable="true" onDragStart={handleDragStart} id={category.id.toString() + task.id.toString()} key={task.id}
+                         data-id={task.id} data-name={task.name} data-description={task.description}>
+
+                        <Task key={task.id} task={task} onChange_name={changeTask} onChange_description={changeTask}/>
+
+                    </div>
                 ))}
             </div>
             <div className="add-task" onClick={toggle}>
