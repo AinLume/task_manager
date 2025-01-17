@@ -12,9 +12,10 @@ interface IProps {
     category: TCategory;
     onChange: (category: TCategory) => void;
     deleteCategory: (id: number) => void;
+    deleteTaskFromCategoryById: (categoryId: number, taskId: number) => void;
 }
 
-export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory}) => {
+export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory, deleteTaskFromCategoryById}) => {
     const [name, setName] = useState<string>(category.name);
     const [tasks, setTasks] = useState<TTask[]>(category.tasks);
 
@@ -25,6 +26,10 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory})
     const [nameIsChanged, setNameIsChanged] = useState<boolean>(false);
     const [descriptionIsChanged, setDescriptionIsChanged] = useState<boolean>(false);
 
+    useEffect(() => {
+        setTasks(category.tasks);
+    }, [category.tasks]);
+
     // drag&drop
     const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
         const task_div =  event.currentTarget;
@@ -33,14 +38,13 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory})
         const task_description = task_div.getAttribute("data-description");
 
         if (task_id && task_name && task_description) {
-            const saved_task: TTask = {
+            const saved_task = {
                 id: parseInt(task_id),
                 name: task_name,
-                description: task_description
+                description: task_description,
+                categoryToDel: category.id
             };
             event.dataTransfer.setData("task", JSON.stringify(saved_task));
-
-            handleDeleteTask(saved_task);
         }
         else {
             console.log("Task doesn't exist");
@@ -59,28 +63,33 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory})
             try {
                 const parsedData = JSON.parse(data);
 
-                if (parsedData.id && parsedData.name && parsedData.description) {
+                if (category.id !== parsedData.categoryToDel) {
+                    if (parsedData.id && parsedData.name && parsedData.description) {
 
-                    const task: TTask = ({
-                        id: tasks[tasks.length - 1].id + 1,
-                        name: parsedData.name,
-                        description: parsedData.description
-                    });
-                    const updatedTasks = [...tasks, task];
-                    setTasks(updatedTasks);
+                        const task: TTask = ({
+                            id: tasks[tasks.length - 1].id + 1,
+                            name: parsedData.name,
+                            description: parsedData.description
+                        });
+                        const updatedTasks = [...tasks, task];
+                        setTasks(updatedTasks);
 
-                    const new_category: TCategory = {
-                        id: category.id,
-                        name: category.name,
-                        tasks: updatedTasks
+                        deleteTaskFromCategoryById(parsedData.categoryToDel, parsedData.id);
+
+                        const new_category: TCategory = {
+                            id: category.id,
+                            name: category.name,
+                            tasks: updatedTasks
+                        }
+                        localStorage.removeItem(String(new_category.id));
+                        localStorage.setItem(String(new_category.id), JSON.stringify(new_category));
+
+                        console.log("D&D, id - " + data);
+                    } else {
+                        console.log("Invalid task data")
                     }
-                    localStorage.removeItem(String(new_category.id));
-                    localStorage.setItem(String(new_category.id), JSON.stringify(new_category));
-
-                    console.log("D&D, id - " + data);
-                }
-                else {
-                    console.log("Invalid task data")
+                } else {
+                    console.log("dnd to the same category");
                 }
             }
             catch(error) {
@@ -168,9 +177,7 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory})
     }
 
     const handleDeleteTask = (t: TTask) => {
-        const index = tasks.findIndex((task: TTask) => task.id === t.id);
-        const updatedTasks = tasks.splice(index, 1);
-
+        const updatedTasks = tasks.filter((task: TTask) => task.id !== t.id);
         setTasks(updatedTasks);
 
         const new_category: TCategory = {

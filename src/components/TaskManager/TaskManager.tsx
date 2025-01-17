@@ -77,11 +77,30 @@ export const TaskManager = () => {
         localStorage.setItem("categoriesIds", JSON.stringify(newCIds));
     }
 
+    const deleteTaskFromCategoryById = (categoryId: number, taskId: number) => {
+        const updatedCategories = categories.map((category: TCategory) => {
+           if (category.id === categoryId) {
+               return {
+                   ...category,
+                   tasks: category.tasks.filter((task: TTask) => task.id !== taskId),
+               };
+           }
+           return category;
+        });
+        setCategories(updatedCategories);
+
+        const updCategory = updatedCategories.find((c: TCategory) => c.id === categoryId);
+        if (updCategory) {
+            localStorage.setItem(String(categoryId), JSON.stringify(updCategory));
+        }
+    }
+
     return (
         <div className='container'>
             <div className='categories-container'>
                 {categories.map((category) => (
-                    <CategoryColumn key={category.id} category={category} onChange={changeCategoryName} deleteCategory={handleDeleteCategory}/>
+                    <CategoryColumn key={category.id} category={category} onChange={changeCategoryName}
+                                    deleteCategory={handleDeleteCategory} deleteTaskFromCategoryById={deleteTaskFromCategoryById}/>
                 ))}
                 <button className="add-column-btn" onClick={handleAddCategory}>+ Add category</button>
             </div>
