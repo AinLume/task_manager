@@ -95,6 +95,24 @@ export const TaskManager = () => {
         }
     }
 
+    const addTaskToCategoryById = (categoryId: number, task: TTask) => {
+        const updatedCategories = categories.map((category: TCategory) => {
+            if (category.id === categoryId) {
+                return {
+                    ...category,
+                    tasks: [...category.tasks, task],
+                };
+            }
+            return category;
+        });
+        setCategories(updatedCategories);
+
+        const updCategory = updatedCategories.find((c) => c.id === categoryId);
+        if (updCategory) {
+            localStorage.setItem(String(categoryId), JSON.stringify(updCategory));
+        }
+    }
+
     return (
         <div className='container'>
             <div className='categories-container'>

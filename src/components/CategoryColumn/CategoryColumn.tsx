@@ -26,10 +26,6 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory, 
     const [nameIsChanged, setNameIsChanged] = useState<boolean>(false);
     const [descriptionIsChanged, setDescriptionIsChanged] = useState<boolean>(false);
 
-    useEffect(() => {
-        setTasks(category.tasks);
-    }, [category.tasks]);
-
     // drag&drop
     const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
         const task_div =  event.currentTarget;
@@ -174,20 +170,6 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory, 
     const handleDeleteCategory = () => {
         localStorage.removeItem(String(category.id));
         deleteCategory(category.id);
-    }
-
-    const handleDeleteTask = (t: TTask) => {
-        const updatedTasks = tasks.filter((task: TTask) => task.id !== t.id);
-        setTasks(updatedTasks);
-
-        const new_category: TCategory = {
-            id: category.id,
-            name: category.name,
-            tasks: updatedTasks
-        };
-
-        localStorage.removeItem(String(new_category.id));
-        localStorage.setItem(String(new_category.id), JSON.stringify(new_category));
     }
 
     useEffect(() => {
