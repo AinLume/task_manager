@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import {TCategory, TTask} from "../../types";
 import "./styles.css";
 import {Task} from "../Task";
@@ -18,6 +18,7 @@ interface IProps {
 export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory, deleteTaskFromCategoryById}) => {
     const [name, setName] = useState<string>(category.name);
     const [tasks, setTasks] = useState<TTask[]>(category.tasks);
+    const syncTasks = useRef<boolean>(true);
 
     const [t_name, setTName] = useState<string>("");
     const [t_description, setTDescription] = useState<string>("");
@@ -26,8 +27,16 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory, 
     const [nameIsChanged, setNameIsChanged] = useState<boolean>(false);
     const [descriptionIsChanged, setDescriptionIsChanged] = useState<boolean>(false);
 
+    useEffect(() => {
+        if (syncTasks.current) {
+            setTasks(category.tasks);
+        }
+    }, [category.tasks]);
+
     // drag&drop
     const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
+        syncTasks.current = false;
+
         const task_div =  event.currentTarget;
         const task_id = task_div.getAttribute("data-id");
         const task_name = task_div.getAttribute("data-name");
@@ -95,6 +104,7 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory, 
         else {
             console.error("No task data");
         }
+        syncTasks.current = true;
     };
     // drag&drop
 
