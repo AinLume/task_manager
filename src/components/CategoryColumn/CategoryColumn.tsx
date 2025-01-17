@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import {TCategory, TTask} from "../../types";
 import "./styles.css";
 import {Task} from "../Task";
@@ -13,11 +13,12 @@ interface IProps {
     onChange: (category: TCategory) => void;
     deleteCategory: (id: number) => void;
     deleteTaskFromCategoryById: (categoryId: number, taskId: number) => void;
+    addTaskToCategoryById: (categoryId: number, task: TTask) => void;
 }
 
-export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory, deleteTaskFromCategoryById}) => {
+export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory,
+                                               deleteTaskFromCategoryById, addTaskToCategoryById}) => {
     const [name, setName] = useState<string>(category.name);
-    const [tasks, setTasks] = useState<TTask[]>(category.tasks);
 
     const [t_name, setTName] = useState<string>("");
     const [t_description, setTDescription] = useState<string>("");
@@ -63,22 +64,13 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory, 
                     if (parsedData.id && parsedData.name && parsedData.description) {
 
                         const task: TTask = ({
-                            id: tasks[tasks.length - 1].id + 1,
+                            id: category.tasks[category.tasks.length - 1].id + 1,
                             name: parsedData.name,
                             description: parsedData.description
                         });
-                        const updatedTasks = [...tasks, task];
-                        setTasks(updatedTasks);
 
+                        addTaskToCategoryById(category.id, task);
                         deleteTaskFromCategoryById(parsedData.categoryToDel, parsedData.id);
-
-                        const new_category: TCategory = {
-                            id: category.id,
-                            name: category.name,
-                            tasks: updatedTasks
-                        }
-                        localStorage.removeItem(String(new_category.id));
-                        localStorage.setItem(String(new_category.id), JSON.stringify(new_category));
 
                         console.log("D&D, id - " + data);
                     } else {
@@ -122,43 +114,29 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory, 
     }
 
     const changeTask = (t: TTask) => {
-        const updatedTasks =  tasks.map((task: TTask) => {
+        category.tasks.map((task: TTask) => {
             if (task.id === t.id) {
                 return t;
             }
             return task;
         });
-        setTasks(updatedTasks);
 
-        const new_category: TCategory = {
-            id: category.id,
-            name: category.name,
-            tasks: updatedTasks
-        };
-
-        localStorage.removeItem(String(new_category.id));
-        localStorage.setItem(String(new_category.id), JSON.stringify(new_category));
+        localStorage.removeItem(String(category.id));
+        localStorage.setItem(String(category.id), JSON.stringify(category));
     }
 
     const handleAddTask = () => {
         if (nameIsChanged && descriptionIsChanged) {
             const new_task: TTask = {
-                id: tasks.length + 1,
+                id: category.tasks.length + 1,
                 name: t_name,
                 description: t_description
             };
 
-            const updatedTasks = [...tasks, new_task];
-            setTasks(updatedTasks);
+            category.tasks = [...category.tasks, new_task];
 
-            const new_category: TCategory = {
-                id: category.id,
-                name: category.name,
-                tasks: updatedTasks
-            }
-
-            localStorage.removeItem(String(new_category.id));
-            localStorage.setItem(String(new_category.id), JSON.stringify(new_category));
+            localStorage.removeItem(String(category.id));
+            localStorage.setItem(String(category.id), JSON.stringify(category));
 
             setTName("");
             setTDescription("");
@@ -192,7 +170,7 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory, 
                 </button>
             </div>
             <div onDragOver={enableDropping} onDrop={handleDrop} className="tasks-container">
-                {tasks.map((task) => (
+                {category.tasks.map((task) => (
                     <div draggable="true" onDragStart={handleDragStart} id={category.id.toString() + task.id.toString()} key={task.id}
                          data-id={task.id} data-name={task.name} data-description={task.description}>
 
@@ -221,5 +199,5 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory, 
                 />
             </TaskModal>
         </div>
-);
+    );
 };

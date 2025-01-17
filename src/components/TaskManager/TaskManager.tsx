@@ -118,7 +118,8 @@ export const TaskManager = () => {
             <div className='categories-container'>
                 {categories.map((category) => (
                     <CategoryColumn key={category.id} category={category} onChange={changeCategoryName}
-                                    deleteCategory={handleDeleteCategory} deleteTaskFromCategoryById={deleteTaskFromCategoryById}/>
+                                    deleteCategory={handleDeleteCategory} deleteTaskFromCategoryById={deleteTaskFromCategoryById}
+                                    addTaskToCategoryById={addTaskToCategoryById}/>
                 ))}
                 <button className="add-column-btn" onClick={handleAddCategory}>+ Add category</button>
             </div>
