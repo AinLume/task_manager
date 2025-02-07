@@ -28,14 +28,15 @@ export const Task: FC<IProps> = ({task, onChange_name, onChange_description}) =>
     }
 
     return (
-        <div className='task'>
+        <div className='task' >
+
             <input type='checkbox' className='task-checkbox'></input>
-            <div className='task-content' >
+            <div className='task-content'>
                 <label className='task-name'>{task.name}</label>
                 <label className='task-description'>{task.description}</label>
             </div>
             <button className="task-edit-btn" onClick={toggle}>
-                <FontAwesomeIcon icon={faPen} />
+                <FontAwesomeIcon icon={faPen}/>
             </button>
             <TaskModal isOpen={isOpen} toggle={toggle}>
                 <ChangeableLabel component="input"

@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useRef, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {TCategory, TTask} from "../../types";
 import "./styles.css";
 import {Task} from "../Task";
@@ -8,17 +8,19 @@ import {ChangeableLabel} from "../ChangeableLabel";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
 
+import {Draggable, Droppable} from 'react-beautiful-dnd';
+
 interface IProps {
     category: TCategory;
     onChange: (category: TCategory) => void;
     deleteCategory: (id: number) => void;
     deleteTaskFromCategoryById: (categoryId: number, taskId: number) => void;
+    generateTaskId: () => number;
 }
 
-export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory, deleteTaskFromCategoryById}) => {
+export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory, deleteTaskFromCategoryById, generateTaskId}) => {
     const [name, setName] = useState<string>(category.name);
     const [tasks, setTasks] = useState<TTask[]>(category.tasks);
-    const syncTasks = useRef<boolean>(true);
 
     const [t_name, setTName] = useState<string>("");
     const [t_description, setTDescription] = useState<string>("");
@@ -26,87 +28,6 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory, 
 
     const [nameIsChanged, setNameIsChanged] = useState<boolean>(false);
     const [descriptionIsChanged, setDescriptionIsChanged] = useState<boolean>(false);
-
-    useEffect(() => {
-        if (syncTasks.current) {
-            setTasks(category.tasks);
-        }
-    }, [category.tasks]);
-
-    // drag&drop
-    const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
-        syncTasks.current = false;
-
-        const task_div =  event.currentTarget;
-        const task_id = task_div.getAttribute("data-id");
-        const task_name = task_div.getAttribute("data-name");
-        const task_description = task_div.getAttribute("data-description");
-
-        if (task_id && task_name && task_description) {
-            const saved_task = {
-                id: parseInt(task_id),
-                name: task_name,
-                description: task_description,
-                categoryToDel: category.id
-            };
-            event.dataTransfer.setData("task", JSON.stringify(saved_task));
-        }
-        else {
-            console.log("Task doesn't exist");
-        }
-    }
-
-    const enableDropping = (event: React.DragEvent<HTMLDivElement>) => {
-        event.preventDefault();
-    }
-
-    const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
-        event.preventDefault();
-        const data = event.dataTransfer.getData("task");
-
-        if (data) {
-            try {
-                const parsedData = JSON.parse(data);
-
-                if (category.id !== parsedData.categoryToDel) {
-                    if (parsedData.id && parsedData.name && parsedData.description) {
-
-                        const task: TTask = ({
-                            id: tasks[tasks.length - 1].id + 1,
-                            name: parsedData.name,
-                            description: parsedData.description
-                        });
-                        const updatedTasks = [...tasks, task];
-                        setTasks(updatedTasks);
-
-                        deleteTaskFromCategoryById(parsedData.categoryToDel, parsedData.id);
-
-                        const new_category: TCategory = {
-                            id: category.id,
-                            name: category.name,
-                            tasks: updatedTasks
-                        }
-                        localStorage.removeItem(String(new_category.id));
-                        localStorage.setItem(String(new_category.id), JSON.stringify(new_category));
-
-                        console.log("D&D, id - " + data);
-                    } else {
-                        console.log("Invalid task data")
-                    }
-                } else {
-                    console.log("dnd to the same category");
-                }
-            }
-            catch(error) {
-                console.error("Failed to save task", error);
-            }
-        }
-        else {
-            console.error("No task data");
-        }
-        syncTasks.current = true;
-    };
-    // drag&drop
 
     const handleSetTName = () => {
         if (t_name !== "") {
@@ -153,7 +74,7 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory, 
     const handleAddTask = () => {
         if (nameIsChanged && descriptionIsChanged) {
             const new_task: TTask = {
-                id: tasks.length + 1,
+                id: generateTaskId(),
                 name: t_name,
                 description: t_description
             };
@@ -201,16 +122,25 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory, 
                     <FontAwesomeIcon icon={faTrash} />
                 </button>
             </div>
-            <div onDragOver={enableDropping} onDrop={handleDrop} className="tasks-container">
-                {tasks.map((task) => (
-                    <div draggable="true" onDragStart={handleDragStart} id={category.id.toString() + task.id.toString()} key={task.id}
-                         data-id={task.id} data-name={task.name} data-description={task.description}>
+            <Droppable droppableId={category.id.toString()}>
+                {(provided) => (
+                    <div className="tasks-container" ref={provided.innerRef} {...provided.droppableProps}>
+                        {tasks.map((task, index) => (
+                            <Draggable key={task.id} draggableId={task.id.toString()} index={index}>
 
-                        <Task key={task.id} task={task} onChange_name={changeTask} onChange_description={changeTask}/>
+                                {(provided) => (
+                                    <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                        <Task key={task.id} task={task} onChange_name={changeTask}
+                                              onChange_description={changeTask} />
+                                    </div>
+                                )}
 
+                            </Draggable>
+                        ))}
+                        {provided.placeholder}
                     </div>
-                ))}
-            </div>
+                )}
+            </Droppable>
             <div className="add-task" onClick={toggle}>
                 <label>+ Add task</label>
             </div>
