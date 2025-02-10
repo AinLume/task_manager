@@ -8,16 +8,18 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPen} from "@fortawesome/free-solid-svg-icons";
 
 interface IProps {
-    task: TTask;
-    onChange_name: (task: TTask) => void;
-    onChange_description: (task: TTask) => void;
+    task: TTask,
+    onChange_name: (task: TTask) => void,
+    onChange_description: (task: TTask) => void,
+    onComplete: (task: TTask) => void,
 }
 
-export const Task: FC<IProps> = ({task, onChange_name, onChange_description}) => {
+export const Task: FC<IProps> = ({task, onChange_name, onChange_description, onComplete}) => {
     const {isOpen, toggle} = useModal();
 
     const [name, setName] = useState<string>(task.name);
     const [description, setDescription] = useState<string>(task.description);
+    const [isDone, setDone] = useState<boolean>(task.isDone);
 
     const handleChangeName = () => {
         onChange_name({...task, name});
@@ -27,10 +29,17 @@ export const Task: FC<IProps> = ({task, onChange_name, onChange_description}) =>
         onChange_description({...task, description});
     }
 
-    return (
-        <div className='task' >
+    const handleIsCompleting = () => {
+        const newIsDone = !isDone;
+        setDone(newIsDone);
+        console.log("Состояние чек бокса изменилось: " + isDone + " & " + newIsDone);
 
-            <input type='checkbox' className='task-checkbox'></input>
+        onComplete({...task, isDone});
+    }
+
+    return (
+        <div className='task'>
+            <input type='checkbox' className={isDone ? "task-checkbox-done" : "task-checkbox"} onChange={handleIsCompleting}></input>
             <div className='task-content'>
                 <label className='task-name'>{task.name}</label>
                 <label className='task-description'>{task.description}</label>

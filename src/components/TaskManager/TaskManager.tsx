@@ -41,7 +41,8 @@ export const TaskManager = () => {
                 const tasks: TTask[] = ls_tasks.map((task: any) => ({
                     id: task.id,
                     name: task.name,
-                    description: task.description
+                    description: task.description,
+                    isDone: task.isDone
                 }));
 
                 const category: TCategory = {

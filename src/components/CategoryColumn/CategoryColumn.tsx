@@ -22,6 +22,10 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory, 
     const [name, setName] = useState<string>(category.name);
     const [tasks, setTasks] = useState<TTask[]>(category.tasks);
 
+    useEffect(() => {
+        setTasks(category.tasks);
+    }, [category.tasks]);
+
     const [t_name, setTName] = useState<string>("");
     const [t_description, setTDescription] = useState<string>("");
     const {isOpen, toggle} = useModal();
@@ -71,12 +75,36 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory, 
         localStorage.setItem(String(new_category.id), JSON.stringify(new_category));
     }
 
+    const handleCompleteTaskToggle = (t: TTask) => {
+        t.isDone = !t.isDone
+        const newTasks = tasks.map((task: TTask) => {
+            if (task.id === t.id) {
+                return t;
+            }
+            return task;
+        });
+        console.log(newTasks);
+        setTasks(newTasks);
+
+        const new_category: TCategory = {
+            id: category.id,
+            name: category.name,
+            tasks: newTasks
+        };
+
+        console.log(tasks);
+
+        localStorage.removeItem(String(new_category.id));
+        localStorage.setItem(String(new_category.id), JSON.stringify(new_category));
+    }
+
     const handleAddTask = () => {
         if (nameIsChanged && descriptionIsChanged) {
             const new_task: TTask = {
                 id: generateTaskId(),
                 name: t_name,
-                description: t_description
+                description: t_description,
+                isDone: false
             };
 
             const updatedTasks = [...tasks, new_task];
@@ -131,7 +159,7 @@ export const CategoryColumn: FC<IProps> = ({category, onChange, deleteCategory, 
                                 {(provided) => (
                                     <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
                                         <Task key={task.id} task={task} onChange_name={changeTask}
-                                              onChange_description={changeTask} />
+                                              onChange_description={changeTask} onComplete={handleCompleteTaskToggle} />
                                     </div>
                                 )}
 
