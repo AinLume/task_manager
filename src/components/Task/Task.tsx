@@ -39,7 +39,14 @@ export const Task: FC<IProps> = ({task, onChange_name, onChange_description, onC
 
     return (
         <div className='task'>
-            <input type='checkbox' className={isDone ? "task-checkbox-done" : "task-checkbox"} onChange={handleIsCompleting}></input>
+            <label className="checkbox-container">
+                <input
+                    type='checkbox'
+                    checked={isDone}
+                    onChange={handleIsCompleting}
+                />
+                <span className={isDone ? "task-checkbox-done" : "task-checkbox"}></span>
+            </label>
             <div className='task-content'>
                 <label className='task-name'>{task.name}</label>
                 <label className='task-description'>{task.description}</label>

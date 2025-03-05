@@ -132,17 +132,45 @@ export const TaskManager = () => {
         if (!destination) {return;}
         if (destination.droppableId === source.droppableId && destination.index === source.index) {return;}
 
-        const startCategoryIndex = categories.findIndex(c => c.id === Number(source.droppableId));
-        const finishCategoryIndex = categories.findIndex(c => c.id === Number(destination.droppableId));
+        // const startCategoryIndex = categories.findIndex(c => c.id === Number(source.droppableId));
+        // const finishCategoryIndex = categories.findIndex(c => c.id === Number(destination.droppableId));
 
-        const startCategory = categories[startCategoryIndex];
-        const finishCategory = categories[finishCategoryIndex];
+        // Сбор уже отредактированной категории из локал сторедж для избежания проблем с синхронизацией
+        const getCategoryFromLS = (categoryId: string) => {
+            const data = localStorage.getItem(categoryId);
+            if (!data) return null;
 
-        const task = startCategory.tasks.find(task=> task.id === Number(draggableId));
+            const parsed = JSON.parse(data) as {
+                id: number;
+                name: string;
+                tasks: TTask[];
+            };
 
-        if (!task) {
-            return;
+            return {
+                id: parsed.id,
+                name: parsed.name,
+                tasks: parsed.tasks.map((t: TTask) => ({
+                    id: t.id,
+                    name: t.name,
+                    description: t.description,
+                    isDone: t.isDone
+                }))
+            };
         }
+
+        // End
+
+        const startCategoryLS = getCategoryFromLS(source.droppableId);
+        console.log(startCategoryLS);
+        const finishCategoryLS = getCategoryFromLS(destination.droppableId);
+
+        const startCategory = startCategoryLS || categories.find(c => c.id === Number(source.droppableId));
+        const finishCategory = finishCategoryLS || categories.find(c => c.id === Number(destination.droppableId));
+
+        if (!startCategory || !finishCategory) return;
+
+        const task = startCategory.tasks.find((t: { id: number; }) => t.id === Number(draggableId));
+        if (!task) return;
 
         const newStartTasks = Array.from(startCategory.tasks);
         newStartTasks.splice(source.index, 1);
@@ -150,21 +178,27 @@ export const TaskManager = () => {
         const newFinishTasks = Array.from(finishCategory.tasks);
         newFinishTasks.splice(destination.index, 0, task);
 
-        const newCategories = Array.from(categories);
-        newCategories[startCategoryIndex] = {
-            ...startCategory,
-            tasks: newStartTasks,
-        };
 
-        newCategories[finishCategoryIndex] = {
+        const updatedCategories = categories.map(c => {
+            if (c.id === startCategory.id) {
+                return {...startCategory, tasks: newStartTasks};
+            }
+            if (c.id === finishCategory.id) {
+                return {...finishCategory, tasks: newFinishTasks};
+            }
+            return c;
+        });
+
+        setCategories(updatedCategories);
+
+        localStorage.setItem(String(startCategory.id), JSON.stringify({
+            ...startCategory,
+            tasks: newStartTasks
+        }));
+        localStorage.setItem(String(finishCategory.id), JSON.stringify({
             ...finishCategory,
             tasks: newFinishTasks
-        };
-
-        setCategories(newCategories);
-
-        localStorage.setItem(String(startCategory.id), JSON.stringify(newCategories[startCategoryIndex]));
-        localStorage.setItem(String(finishCategory.id), JSON.stringify(newCategories[finishCategoryIndex]));
+        }));
     }
 
     return (
