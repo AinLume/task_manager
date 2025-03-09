@@ -179,7 +179,7 @@ func GetTasksByColumnID(db *sql.DB) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 
 		vars := mux.Vars(r)
-		idStr := vars["id"]
+		idStr := vars["columnId"]
 
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
@@ -208,13 +208,13 @@ func GetTasksByColumnID(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-// AddTaskByColumnID /columns/columnID/tasks POST
+// AddTaskByColumnID /columns/{columnId}/tasks POST
 func AddTaskByColumnID(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
 		vars := mux.Vars(r)
-		idStr := vars["id"]
+		idStr := vars["columnId"]
 
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
